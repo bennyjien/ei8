@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Page {
+  id        String     @id
+  title     String
+  url       String     @unique
+  createdAt DateTime   @default(now())
+  meta      PageMeta[]
+  sortOrder Int?
+  parentId  String?
+  parent    Page?      @relation("Parent", fields: [parentId], references: [id])
+  subpages  Page[]     @relation("Parent")
+
+  @@map("page")
+}
+
+model PageMeta {
+  id     String @id @default(cuid())
+  name   String
+  value  Json
+  pageId String
+  page   Page?  @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@map("page_meta")
+}
+
+model Setting {
+  name  String @id
+  value String
+
+  @@map("settings")
+}
+
+model Navigation {
+  id   String           @id @default(cuid())
+  name String
+  menu NavigationMenu[]
+
+  @@map("navigation")
+}
+
+model NavigationMenu {
+  id           String     @id @default(cuid())
+  label        String
+  url          String
+  navigationId String
+  navigation   Navigation @relation(fields: [navigationId], references: [id], onDelete: Cascade)
+
+  @@map("navigation_menu")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  name      String?
+  password  String
+  role      String
+  createdAt DateTime @default(now())
+  userRole  UserRole @relation(fields: [role], references: [id])
+
+  @@map("users")
+}
+
+model UserRole {
+  id    String   @id @default(cuid())
+  name  String
+  read  String[]
+  write String[]
+  users User[]
+
+  @@map("user_roles")
+}

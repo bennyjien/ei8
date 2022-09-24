@@ -1,0 +1,34 @@
+.home-page {
+	@include wrapper-grid;
+	height: 100%;
+
+	&-header,
+	&-footer {
+		grid-column: wrapper;
+	}
+
+	&-header {
+		@include whitespace(0 0 1);
+	}
+
+	&-content {
+		@include wrapper-grid;
+		grid-column: full;
+
+		.section {
+			grid-column: wrapper;
+
+			&.section-full {
+				grid-column: full;
+			}
+
+			+.section {
+				@include whitespace(1 0 0);
+			}
+		}
+	}
+
+	&-footer {
+		@include whitespace(1 0 0);
+	}
+}
